@@ -1,0 +1,23 @@
+unit Controller.Cliente;
+
+interface
+
+uses System.SysUtils, Horse;
+
+procedure Registry;
+procedure ListarClientes(Req: THorseRequest; Res: THorseResponse);
+
+implementation
+
+procedure ListarClientes(Req: THorseRequest; Res: THorseResponse)
+begin
+  Res.Send('Listando clientes');
+end;
+
+procedure Registry;
+begin
+  THorse.Get('/clientes', ListarClientes);
+  THorse.Post('/clientes', CadastrarClientes);
+end;
+
+end.

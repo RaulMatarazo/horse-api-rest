@@ -5,14 +5,11 @@ program ServerHorse;
 {$R *.res}
 
 uses
-  System.SysUtils, Horse;
+  System.SysUtils,
+  Horse,
+  Controller.Cliente in 'Controller\Controller.Cliente.pas';
 
 begin
-  THorse.Get('/ping',
-    procedure(Req: THorseRequest; Res: THorseResponse)
-    begin
-      Res.Send('pong');
-    end);
-
+  Controller.Cliente.Registry;
   THorse.Listen(9000);
 end.
