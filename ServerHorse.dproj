@@ -92,6 +92,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="Controller\Controller.Cliente.pas"/>
+        <DCCReference Include="Model\Model.connection.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
