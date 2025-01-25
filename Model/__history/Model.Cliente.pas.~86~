@@ -22,6 +22,7 @@ type
       function ListarCliente(order_by: string; out erro: string): TFDQuery;
       function Inserir(out erro: string): Boolean;
       function Excluir(out erro: string): Boolean;
+      function Editar(out erro: string): Boolean;
 end;
 
 implementation
@@ -113,7 +114,11 @@ begin
     query.Free;
     erro := '';
     Result := True;
-  except
+  except on ex:exception do
+  begin
+    erro := 'Erro ao criar cliente: ' + ex.Message;
+    Result := False;
+  end;
 
   end;
   
@@ -144,4 +149,45 @@ begin
   end;
   end;
 end;
+
+function TCliente.Editar(out erro: string): Boolean;
+var
+  query: TFDQuery;
+begin
+  try
+
+    // Validações...
+    if id_cliente < 0 then
+    begin
+        Result := False;
+        erro := 'Informe o ID do cliente';
+        exit;
+    end;
+    
+
+    query := TFDQuery.Create(nil);
+    query.Connection := Model.connection.FConnection;
+    with query do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('UPDATE TAB_CLIENTE SET NOME=:NOME, EMAIL=:EMAIL, FONE:=FONE');
+      SQL.Add('WHERE ID_CLIENTE = :ID_CLIENTE');
+      ParamByName('NOME').Value := nome;
+      ParamByName('EMAIL').Value := email;
+      ParamByName('FONE').Value := telefone;
+      ParamByName('ID_CLIENTE').Value := id_cliente;
+      ExecSQL;
+    end;
+    query.Free;
+    erro := '';
+    Result := true;
+  except on ex:exception do
+  begin
+    erro := 'Erro ao alterar usuário: ' + ex.Message;
+    Result := False;
+  end;
+  end;
+end;
+
 end.

@@ -121,7 +121,6 @@ begin
       cliente.id_cliente := Req.Params['id'].ToInteger;
       if not cliente.Excluir(erro) then
         raise Exception.Create(erro);
-
     except on ex:exception do
     begin
       Res.Send(ex.Message).Status(400);
@@ -129,8 +128,14 @@ begin
     end;
 
     end;
-  finally
 
+    objCliente := TJSONObject.Create;
+    objCliente.AddPair('id_cliente', cliente.id_cliente.ToString);
+
+    Res.Send<TJSONObject>(objCliente);
+  finally
+    cliente.Free;
+    objCliente.Free;
   end;
 end;
 

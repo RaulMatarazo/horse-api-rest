@@ -22,6 +22,7 @@ type
       function ListarCliente(order_by: string; out erro: string): TFDQuery;
       function Inserir(out erro: string): Boolean;
       function Excluir(out erro: string): Boolean;
+      function Editar(out erro: string): Boolean;
 end;
 
 implementation
@@ -101,9 +102,23 @@ begin
 
       // BUSCA ID INSERIDO
       Params.Clear;
+      SQL.Clear;
+      SQL.Add('SELECT MAX(ID_CLIENTE) AS ID_CLIENTE FROM TAB_CLIENTE');
+      SQL.Add('WHERE EMAIL = :email');
+      ParamByName('email').Value := email;
+      active := true;
 
+      id_cliente := FieldByName('ID_CLIENTE').AsInteger;
     end;
-  except
+
+    query.Free;
+    erro := '';
+    Result := True;
+  except on ex:exception do
+  begin
+    erro := 'Erro ao criar cliente: ' + ex.Message;
+    Result := False;
+  end;
 
   end;
   
@@ -134,4 +149,35 @@ begin
   end;
   end;
 end;
+
+function TCliente.Editar(out erro: string): Boolean;
+var
+  query: TFDQuery;
+begin
+  try
+    query := TFDQuery.Create(nil);
+    query.Connection := Model.connection.FConnection;
+    with query do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('UPDATE TAB_CLIENTE SET NOME=:NOME, EMAIL=:EMAIL, FONE:=FONE');
+      SQL.Add('WHERE ID_CLIENTE = :ID_CLIENTE');
+      ParamByName('NOME').Value := nome;
+      ParamByName('EMAIL').Value := email;
+      ParamByName('FONE').Value := telefone;
+      ParamByName('ID_CLIENTE').Value := id_cliente;
+      ExecSQL;
+    end;
+    query.Free;
+    erro := '';
+    Result := true;
+  except on ex:exception do
+  begin
+    erro := 'Erro ao excluir usuário: ' + ex.Message;
+    Result := False;
+  end;
+  end;
+end;
+
 end.
